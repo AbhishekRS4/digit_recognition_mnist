@@ -1,0 +1,22 @@
+{
+    "TARGET_IMAGE_SIZE" : [28, 28],
+    "train_images_path" : ["mnist_png", "training"],
+    "test_images_path" : ["mnist_png", "testing"],
+    "NUM_CHANNELS" : 1,
+    "NUM_CLASSES" : 10,
+    "NUM_KERNELS" : [32, 64],
+    "KERNEL_SIZE" : [3, 3],
+    "R_KERNEL_SIZE" : [7, 7],
+    "POOL_SIZE" : [2, 2],
+    "STRIDES" : [1, 1],
+    "PADDING" : "same",
+    "DATA_FORMAT" : "channels_last",
+    "TRAINING" : 1,
+    "DENSE_LAYER_NEURONS" : [64],
+    "DROPOUT_RATE" : 0.3,
+    "learning_rate" : 0.001,
+    "num_epochs" : 30,
+    "batch_size" : 50,
+    "model_metrics" : ["model_files_30_new", "digits_metrics.npy"],
+    "model_file" : ["model_files_30_new", "digits_model"]
+}
