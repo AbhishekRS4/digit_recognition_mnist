@@ -94,22 +94,14 @@ def build_network(config, img_pl, training = False):
     
     
     output_tensor = get_conv2d_layer(input_tensor = img_pl, num_filters = config['NUM_KERNELS'][0], kernel_size = config['KERNEL_SIZE'], strides = config['STRIDES'], padding = config['PADDING'], data_format = config['DATA_FORMAT'], name = 'conv1_1')
-    #if training:
-        #output_tensor = get_batchnorm_layer(input_tensor = output_tensor, trainable = True, name = 'batchnorm1_1')
     output_tensor = get_elu_activation(input_tensor = output_tensor, name = 'elu1_1')
     output_tensor = get_conv2d_layer(input_tensor = output_tensor, num_filters = config['NUM_KERNELS'][0], kernel_size = config['KERNEL_SIZE'], strides = config['STRIDES'], padding = config['PADDING'], data_format = config['DATA_FORMAT'], name = 'conv1_2')
-    #if training:
-        #output_tensor = get_batchnorm_layer(input_tensor = output_tensor, trainable = True, name = 'batchnorm1_2')
     output_tensor = get_elu_activation(input_tensor = output_tensor, name = 'elu1_2')
     output_tensor = get_maxpool2d_layer(input_tensor = output_tensor, pool_size = config['POOL_SIZE'], strides = config['POOL_SIZE'], padding = config['PADDING'], data_format = config['DATA_FORMAT'], name = 'maxpool_1')
     
     output_tensor = get_conv2d_layer(input_tensor = output_tensor, num_filters = config['NUM_KERNELS'][1], kernel_size = config['KERNEL_SIZE'], strides = config['STRIDES'], padding = config['PADDING'], data_format = config['DATA_FORMAT'], name = 'conv2_1')
-    #if training:    
-        #output_tensor = get_batchnorm_layer(input_tensor = output_tensor, trainable = True, name = 'batchnorm2_1')
     output_tensor = get_elu_activation(input_tensor = output_tensor, name = 'elu2_1')
     output_tensor = get_conv2d_layer(input_tensor = output_tensor, num_filters = config['NUM_KERNELS'][1], kernel_size = config['KERNEL_SIZE'], strides = config['STRIDES'], padding = config['PADDING'], data_format = config['DATA_FORMAT'], name = 'conv2_2')
-    #if training:
-        #output_tensor = get_batchnorm_layer(input_tensor = output_tensor, trainable = True, name = 'batchnorm2_2')
     output_tensor = get_elu_activation(input_tensor = output_tensor, name = 'elu2_2')
     output_tensor = get_maxpool2d_layer(input_tensor = output_tensor, pool_size = config['POOL_SIZE'], strides = config['POOL_SIZE'], padding = config['PADDING'], data_format = config['DATA_FORMAT'], name = 'maxpool_2')
     
