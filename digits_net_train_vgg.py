@@ -1,13 +1,15 @@
 # coding: utf-8
 # @author : Abhishek R S
 
-import tensorflow as tf
-import numpy as np
 import math
 import os
 import time
-from digits_net_utils import get_all_images_labels, read_config_file, get_preprocessed_labels
+import numpy as np
+import tensorflow as tf
 from sklearn.utils import shuffle
+
+from digits_net_utils import get_all_images_labels, read_config_file, get_preprocessed_labels
+
 
 
 param_config_file_name = os.path.join(os.getcwd(), "mnist_config.json")

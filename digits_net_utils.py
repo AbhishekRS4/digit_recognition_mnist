@@ -1,8 +1,8 @@
 # coding: utf-8
 # @author : Abhishek R S
 
-import json
 import os
+import json
 import numpy as np
 from scipy.misc import imread, imresize
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder

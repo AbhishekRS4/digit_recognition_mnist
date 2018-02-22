@@ -1,11 +1,12 @@
 # coding: utf-8
 # @author : Abhishek R S
 
-import tensorflow as tf
-import numpy as np
 import os
 import time
+import numpy as np
+import tensorflow as tf
 from sklearn.metrics import accuracy_score, confusion_matrix
+
 from digits_net_utils import read_config_file, get_all_images_labels, get_preprocessed_labels
 from digits_net_train import get_placeholders, build_network
 
