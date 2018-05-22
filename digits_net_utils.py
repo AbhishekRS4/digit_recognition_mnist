@@ -9,17 +9,23 @@ from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 
 # read the json file and return the content
 def read_config_file(json_file_name):
-	# open and read the json file
+    # open and read the json file
     config = json.load(open(json_file_name))
 
     # return the content
     return config
 
 
+# create the model directory if not present
+def init(directory):
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+
 # returns the label of the image
 def get_label(image_path):
-	# return the label of the current image given the path of the image
-	return image_path.split(os.sep)[-2]
+    # return the label of the current image given the path of the image
+    return image_path.split(os.sep)[-2]
 
 
 # returns all the image file paths
@@ -35,7 +41,7 @@ def get_all_image_paths(path_to_directory):
 
 # returns either train or test data based on the flag
 def get_all_images_labels(config, training = False):
-	# all_images is a list holding all the images
+    # all_images is a list holding all the images
     all_images = list()
 
     # all_labels is a list holding all the correspoding labels
@@ -43,9 +49,9 @@ def get_all_images_labels(config, training = False):
     
     # based on the flag, set whether to read train or test data
     if training:
-    	images_directory_path = os.path.join(os.getcwd(), os.path.join(config['train_images_path'][0], config['train_images_path'][1]))
+    	images_directory_path = os.path.join(os.getcwd(), os.path.join(config['TRAIN_IMAGES_PATH'][0], config['TRAIN_IMAGES_PATH'][1]))
     else:
-    	images_directory_path = os.path.join(os.getcwd(), os.path.join(config['test_images_path'][0], config['test_images_path'][1]))
+    	images_directory_path = os.path.join(os.getcwd(), os.path.join(config['TEST_IMAGES_PATH'][0], config['TEST_IMAGES_PATH'][1]))
 
     all_image_paths = get_all_image_paths(images_directory_path)
 
@@ -58,7 +64,7 @@ def get_all_images_labels(config, training = False):
             all_images.append(temp_img)
             all_labels.append(temp_label)
         except IOError:
-            print("File not an image or image file is corrupt")
+            print("File is either corrupted or not an image")
             
     # convert the data into numpy array and return it
     return np.array(all_images), np.array(all_labels)
