@@ -50,6 +50,7 @@ def infer():
     print("Preprocessing the data...................")
     all_images = all_images.reshape(all_images.shape[0], all_images.shape[1], all_images.shape[2], config['NUM_CHANNELS'])
     all_labels, all_original_classes = get_preprocessed_labels(all_labels, not(config['TRAINING']))
+    all_original_classes = [int(x) for x in all_original_classes]
     print("Preprocessing of the data Completed......")
     print("")
 
@@ -70,11 +71,13 @@ def infer():
 
     print("Images shape : " + str(all_images.shape))
     print("Labels shape : " + str(all_labels.shape))
-    
+    print("")    
+
     ss = tf.Session()
     ss.run(tf.global_variables_initializer())
     tf.train.Saver().restore(ss, os.path.join(os.getcwd(), os.path.join(config['model_file'][0], config['model_file'][1])) + '-' + str(config['num_epochs']))
 
+    print("")
     print("Inference Started.......................")
     ti = time.time()
     labels_predicted_ohe = ss.run(prediction, feed_dict = {img_pl : all_images})
@@ -89,10 +92,11 @@ def infer():
     all_labels_predicted = np.array(all_labels_predicted)
     
     print("Accuracy Score of the model : " + str(get_accuracy_score(all_labels, all_labels_predicted)))
+    print("")
     print("Confusion Matrix for the prediction : ")
     print(get_confusion_matrix(all_labels, all_labels_predicted))
-    print("Original Labels")
-    print(list(all_original_classes))
+    print("")
+    print("Original Labels : " + str(list(all_original_classes)))
     print("")
     ss.close()
 
