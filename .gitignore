@@ -1,0 +1,4 @@
+__pycache__/
+mnist_png/
+model_files_50/
+.ipynb_checkpoints/
