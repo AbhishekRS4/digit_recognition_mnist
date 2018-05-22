@@ -53,17 +53,24 @@ def infer():
     print("Preprocessing of the data Completed......")
     print("")
 
-    print("Images shape : " + str(all_images.shape))
-    print("Labels shape : " + str(all_labels.shape))
  
     print("Loading the Network.....................")
-    IMAGE_PLACEHOLDER_SHAPE = [None] + config['TARGET_IMAGE_SIZE'] + [config['NUM_CHANNELS']]
+    
+    if config['data_format'] == 'channels_last':
+        IMAGE_PLACEHOLDER_SHAPE = [None] + config['TARGET_IMAGE_SIZE'] + [config['NUM_CHANNELS']]
+    else:
+        IMAGE_PLACEHOLDER_SHAPE = [None] + [config['NUM_CHANNELS']] + config['TARGET_IMAGE_SIZE']
+        all_images = np.transpose(all_images, [0, 3, 1, 2])
+ 
     img_pl = get_placeholders(img_placeholder_shape = IMAGE_PLACEHOLDER_SHAPE, training = not(config['TRAINING']))
     network_output = load_model(config, img_pl)
     prediction = get_softmax_layer(input_tensor = network_output)
     print("Loading the Network Completed...........")
     print("")
 
+    print("Images shape : " + str(all_images.shape))
+    print("Labels shape : " + str(all_labels.shape))
+    
     ss = tf.Session()
     ss.run(tf.global_variables_initializer())
     tf.train.Saver().restore(ss, os.path.join(os.getcwd(), os.path.join(config['model_file'][0], config['model_file'][1])) + '-' + str(config['num_epochs']))
