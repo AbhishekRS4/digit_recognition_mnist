@@ -14,8 +14,8 @@
     "dense_layer_neurons" : [64],
     "dropout_rate" : 0.3,
     "learning_rate" : 0.001,
-    "num_epochs" : 50,
+    "num_epochs" : 100,
     "batch_size" : 32,
-    "model_metrics" : ["model_files_50", "digits_metrics.npy"],
-    "model_file" : ["model_files_50", "digits_model"]
+    "model_metrics" : ["model_files_100", "digits_metrics.npy"],
+    "model_file" : ["model_files_100", "digits_model"]
 }
