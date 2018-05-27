@@ -12,10 +12,11 @@
     "padding" : "same",
     "data_format" : "channels_first",
     "dense_layer_neurons" : [64],
-    "dropout_rate" : 0.3,
+    "dropout_rate" : 0.5,
     "learning_rate" : 0.001,
-    "num_epochs" : 100,
+    "num_epochs" : 10,
     "batch_size" : 32,
-    "model_metrics" : ["model_files_100", "digits_metrics.npy"],
-    "model_file" : ["model_files_100", "digits_model"]
+    "model_metrics" : "digits_metrics.npy",
+    "model_file" : "digits_model",
+    "model_directory" : "model_files_"
 }
