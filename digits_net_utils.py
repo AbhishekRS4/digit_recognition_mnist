@@ -42,7 +42,7 @@ def get_all_image_paths(path_to_directory):
     return file_paths
 
 
-# return either train or test data based on the flag
+# return either train or test data
 def get_all_images_labels(config, training = False):
     # all_images is a list holding all the images
     all_images = list()
@@ -96,11 +96,11 @@ def get_train_validation_set(all_images, all_labels, validation_size = 0.04):
     return (train_images, train_labels, valid_images, valid_labels)
 
 
-# return the accuracy score of the model
+# return the accuracy score of the predictions by the model
 def get_accuracy_score(labels_groundtruth, labels_predicted):
     return accuracy_score(labels_groundtruth, labels_predicted)
 
 
-# return the confusion matrix of the predicted labels by the model
+# return the confusion matrix of the predictions by the model
 def get_confusion_matrix(labels_groundtruth, labels_predicted):
     return confusion_matrix(labels_groundtruth, labels_predicted)
