@@ -7,8 +7,6 @@ import time
 import numpy as np
 import tensorflow as tf
 from sklearn.utils import shuffle
-from sklearn.model_selection import train_test_split
-
 from digits_net_utils import init, get_all_images_labels, read_config_file, get_preprocessed_labels, get_train_validation_set, get_accuracy_score
 
 
@@ -66,7 +64,7 @@ def get_optimizer(learning_rate, loss_function):
     return adam_optimizer
 
 
-# return the placeholder based on the flag
+# return the placeholder
 def get_placeholders(img_placeholder_shape, training = False, lbl_placeholder_shape = None):
     img_pl = tf.placeholder(tf.float32, shape = img_placeholder_shape)
     # set the image placeholder
