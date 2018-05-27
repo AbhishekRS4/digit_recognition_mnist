@@ -19,6 +19,7 @@ def load_model(config, img_pl):
     return loaded_model_output
 
 
+# run inference on test set
 def infer():
     print("Reading the Config File..................")
     config = read_config_file(param_config_file_name)
@@ -59,6 +60,8 @@ def infer():
 
     ss = tf.Session()
     ss.run(tf.global_variables_initializer())
+
+    # load the model parameters
     tf.train.Saver().restore(ss, os.path.join(os.getcwd(), os.path.join(model_directory, config['model_file'])) + '-' + str(config['num_epochs']))
 
     print("")
