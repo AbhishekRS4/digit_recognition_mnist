@@ -6,6 +6,9 @@ import json
 import numpy as np
 from scipy.misc import imread, imresize
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, confusion_matrix
+
 
 # read the json file and return the content
 def read_config_file(json_file_name):
@@ -22,13 +25,13 @@ def init(directory):
         os.makedirs(directory)
 
 
-# returns the label of the image
+# return the label of the image
 def get_label(image_path):
     # return the label of the current image given the path of the image
     return image_path.split(os.sep)[-2]
 
 
-# returns all the image file paths
+# return all the image file paths
 def get_all_image_paths(path_to_directory):
     file_paths = list()
 
@@ -39,7 +42,7 @@ def get_all_image_paths(path_to_directory):
     return file_paths
 
 
-# returns either train or test data based on the flag
+# return either train or test data based on the flag
 def get_all_images_labels(config, training = False):
     # all_images is a list holding all the images
     all_images = list()
@@ -70,7 +73,7 @@ def get_all_images_labels(config, training = False):
     return np.array(all_images), np.array(all_labels)
 
 
-# returns labels in one-hot encoding manner
+# return labels in one-hot encoding manner
 def get_preprocessed_labels(all_labels, training = False):
     lbl_encoder = LabelEncoder()
     all_labels = lbl_encoder.fit_transform(all_labels)
@@ -84,3 +87,20 @@ def get_preprocessed_labels(all_labels, training = False):
     all_labels = lbl_onehot_encoder.fit_transform(all_labels).toarray()
 
     return all_labels
+
+
+# split into train and validation set
+def get_train_validation_set(all_images, all_labels, validation_size = 0.04):
+    train_images, valid_images, train_labels, valid_labels = train_test_split(all_images, all_labels, test_size = validation_size, random_state = 4)
+    
+    return (train_images, train_labels, valid_images, valid_labels)
+
+
+# return the accuracy score of the model
+def get_accuracy_score(labels_groundtruth, labels_predicted):
+    return accuracy_score(labels_groundtruth, labels_predicted)
+
+
+# return the confusion matrix of the predicted labels by the model
+def get_confusion_matrix(labels_groundtruth, labels_predicted):
+    return confusion_matrix(labels_groundtruth, labels_predicted)
