@@ -7,7 +7,7 @@ import time
 import numpy as np
 import tensorflow as tf
 from sklearn.utils import shuffle
-from digits_net_utils import init, get_all_images_labels, read_config_file, get_preprocessed_labels, get_train_validation_set, get_accuracy_score
+from digits_net_utils import init, get_all_images_labels, read_config_file, get_preprocessed_labels, get_train_validation_set
 
 
 param_config_file_name = os.path.join(os.getcwd(), "mnist_config.json")
