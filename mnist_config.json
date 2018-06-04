@@ -5,7 +5,7 @@
     "NUM_CHANNELS" : 1,
     "NUM_CLASSES" : 10,
     "TRAINING" : 1,
-    "num_kernels" : [32, 64],
+    "num_kernels" : [16, 32, 64],
     "kernel_size" : [3, 3],
     "pool_size" : [2, 2],
     "strides" : [1, 1],
@@ -14,9 +14,10 @@
     "dense_layer_neurons" : [64],
     "dropout_rate" : 0.5,
     "learning_rate" : 0.001,
-    "num_epochs" : 10,
-    "batch_size" : 32,
-    "model_metrics" : "digits_metrics.npy",
-    "model_file" : "digits_model",
-    "model_directory" : "model_files_"
+    "num_epochs" : 300,
+    "batch_size" : 64,
+    "model_metrics" : ["digits_vgg_metrics.npy", "digits_res_metrics.npy", "digits_preact_res_metrics.npy"],
+    "model_file" : ["digits_vgg_model", "digits_res_model", "digits_preact_res_model"],
+    "model_directory" : ["model_vgg_", "model_res_", "model_preact_res_"],
+    "model_to_use" : 0   
 }
