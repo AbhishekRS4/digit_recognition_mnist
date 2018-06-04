@@ -9,4 +9,5 @@ To do
 - [x] vgg-16 encoder based network
 - [x] normal resnet encoder based network
 - [x] pre-activation resnet encoder based network
-- [ ] performance comparison of architectures
+- [ ] loss visualization of architectures
+- [ ] accuracy comparison of architectures
