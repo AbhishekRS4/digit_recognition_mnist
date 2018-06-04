@@ -1,4 +1,4 @@
 __pycache__/
 mnist_png/
-model_files_*/
+model_*/
 .ipynb_checkpoints/
