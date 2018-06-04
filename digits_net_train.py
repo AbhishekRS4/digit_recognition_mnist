@@ -7,43 +7,10 @@ import time
 import numpy as np
 import tensorflow as tf
 from sklearn.utils import shuffle
-from digits_net_utils import init, get_all_images_labels, read_config_file, get_preprocessed_labels, get_train_validation_set
-
+from digits_net_utils import init, read_config_file, get_all_images_labels, get_preprocessed_labels, get_train_validation_set
+import network_architecture as na
 
 param_config_file_name = os.path.join(os.getcwd(), "mnist_config.json")
-
-
-# return ELU activation function
-def get_elu_activation(input_tensor, name = 'elu'):
-    output_tensor = tf.nn.elu(input_tensor, name = name)
-    return output_tensor
-
-
-# return MaxPool2D layer
-def get_maxpool2d_layer(input_tensor, pool_size, strides, padding, data_format, name = 'maxpool'):
-    output_tensor = tf.layers.max_pooling2d(inputs = input_tensor, pool_size = pool_size, strides = strides, padding = padding, data_format = data_format, name = name)
-    return output_tensor
-
-
-# return Convolution2D layer
-def get_conv2d_layer(input_tensor, num_filters, kernel_size, strides, padding, data_format, name = 'conv'):
-    output_tensor = tf.layers.conv2d(inputs = input_tensor, filters = num_filters, kernel_size = kernel_size, strides = strides, padding = padding, data_format = data_format, name = name)
-    return output_tensor
-
-
-# return the dense layer
-def get_dense_layer(input_tensor, num_neurons, name = 'dense'):
-    return tf.layers.dense(input_tensor, units = num_neurons, name = name)
-
-
-# return the flattened features
-def get_flattened_features(input_tensor, name = 'flatten'):
-    return tf.layers.flatten(input_tensor, name = name)
-
-
-# return the dropout layer
-def get_dropout_layer(input_tensor, rate = 0.5, training = False, name = 'dropout'):
-    return tf.layers.dropout(inputs = input_tensor, rate = rate, training = training, name = name)
 
 
 # return the output of the softmax layer
@@ -83,59 +50,35 @@ def save_model(session, model_directory, model_file, epoch):
     saver.save(session, os.path.join(os.getcwd(), os.path.join(model_directory, model_file)), global_step = (epoch + 1))
 
 
-# build the network and return the output layer
-def build_network(config, img_pl, training = False):
-    
-    # encoder stage 1
-    output_tensor = get_conv2d_layer(input_tensor = img_pl, num_filters = config['num_kernels'][0], kernel_size = config['kernel_size'], strides = config['strides'], padding = config['padding'], data_format = config['data_format'], name = 'conv1_1')
-    output_tensor = get_elu_activation(input_tensor = output_tensor, name = 'elu1_1')
-    output_tensor = get_conv2d_layer(input_tensor = output_tensor, num_filters = config['num_kernels'][0], kernel_size = config['kernel_size'], strides = config['strides'], padding = config['padding'], data_format = config['data_format'], name = 'conv1_2')
-    output_tensor = get_elu_activation(input_tensor = output_tensor, name = 'elu1_2')
-    output_tensor = get_maxpool2d_layer(input_tensor = output_tensor, pool_size = config['pool_size'], strides = config['pool_size'], padding = config['padding'], data_format = config['data_format'], name = 'maxpool_1')
-    
-
-    # encoder stage 2
-    output_tensor = get_conv2d_layer(input_tensor = output_tensor, num_filters = config['num_kernels'][1], kernel_size = config['kernel_size'], strides = config['strides'], padding = config['padding'], data_format = config['data_format'], name = 'conv2_1')
-    output_tensor = get_elu_activation(input_tensor = output_tensor, name = 'elu2_1')
-    output_tensor = get_conv2d_layer(input_tensor = output_tensor, num_filters = config['num_kernels'][1], kernel_size = config['kernel_size'], strides = config['strides'], padding = config['padding'], data_format = config['data_format'], name = 'conv2_2')
-    output_tensor = get_elu_activation(input_tensor = output_tensor, name = 'elu2_2')
-    output_tensor = get_maxpool2d_layer(input_tensor = output_tensor, pool_size = config['pool_size'], strides = config['pool_size'], padding = config['padding'], data_format = config['data_format'], name = 'maxpool_2')
-    
-    # flattened features
-    output_tensor = get_flattened_features(input_tensor = output_tensor, name = 'flatten')
-    output_tensor = get_dense_layer(input_tensor = output_tensor, num_neurons = config['dense_layer_neurons'][0], name = 'dense_1')
-    output_tensor = get_dropout_layer(input_tensor = output_tensor, rate = config["dropout_rate"], training = training, name = 'dropout')
-    output_tensor = get_elu_activation(input_tensor = output_tensor, name = 'elu3')
-
-    output_tensor = get_dense_layer(input_tensor = output_tensor, num_neurons = config['NUM_CLASSES'], name = 'logits')
-    return output_tensor
-
 def batch_train():
 
     print("Reading the config file..................")
     config = read_config_file(param_config_file_name)
+    model_to_use = config['model_to_use']
     print("Reading the config file completed........")
     print("")
 
     print("Initializing.............................")
-    model_directory = config['model_directory'] + str(config['num_epochs'])
+    model_directory = config['model_directory'][model_to_use] + str(config['num_epochs'])
     init(model_directory)
     print("Initializing completed...................")
     print("")
 
     print("Reading train data.......................")
     all_images, all_labels = get_all_images_labels(config, bool(config['TRAINING']))
+    all_images = all_images.reshape(all_images.shape[0], all_images.shape[1], all_images.shape[2], config['NUM_CHANNELS'])
+    print("All data shape : " + str(all_images.shape))
+    print("All labels shape : " + str(all_labels.shape))
     print("Reading train data completed.............")
     print("")
 
     print("Preprocessing the data...................")
-    all_images = all_images.reshape(all_images.shape[0], all_images.shape[1], all_images.shape[2], config['NUM_CHANNELS'])
     all_labels = get_preprocessed_labels(all_labels, bool(config['TRAINING']))
     train_images, train_labels, valid_images, valid_labels = get_train_validation_set(all_images, all_labels) 
     print("Preprocessing of the data completed......")
     print("")
 
- 
+
     print("Building the network.....................")
      
     if config['data_format'] == 'channels_last': 
@@ -147,9 +90,24 @@ def batch_train():
     
     LABEL_PLACEHOLDER_SHAPE = [None] + [config['NUM_CLASSES']]
     img_pl, lbl_pl = get_placeholders(img_placeholder_shape = IMAGE_PLACEHOLDER_SHAPE, training = bool(config['TRAINING']), lbl_placeholder_shape = LABEL_PLACEHOLDER_SHAPE)
-    
-    network_output = build_network(config, img_pl, training = bool(config['TRAINING']))
-    loss = get_loss_function(lbl_pl, network_output)
+    training_pl = tf.placeholder(tf.bool)
+ 
+    if model_to_use == 0: 
+        net_arch = na.Network_Architecture(img_pl, config['kernel_size'], config['num_kernels'], config['strides'], config['data_format'], config['padding'], config['pool_size'], training_pl, config['dense_layer_neurons'], config['NUM_CLASSES'], config['dropout_rate'])
+        net_arch.vgg_encoder()
+        logits = net_arch.logits
+    elif model_to_use == 1:
+        net_arch = na.Network_Architecture(img_pl, config['kernel_size'], config['num_kernels'], config['strides'], config['data_format'], config['padding'], config['pool_size'], training_pl, config['dense_layer_neurons'], config['NUM_CLASSES'], config['dropout_rate'], config['reduction_strides'])
+        net_arch.residual_encoder()
+        logits = net_arch.logits
+    else:
+        net_arch = na.Network_Architecture(img_pl, config['kernel_size'], config['num_kernels'], config['strides'], config['data_format'], config['padding'], config['pool_size'], training_pl, config['dense_layer_neurons'], config['NUM_CLASSES'], config['dropout_rate'], config['reduction_strides'])
+        net_arch.preactivation_residual_encoder()
+        logits = net_arch.logits
+ 
+
+    extra_update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)    
+    loss = get_loss_function(lbl_pl, logits)
     optimizer = get_optimizer(config['learning_rate'], loss)
  
     print("Building the network completed...........")
@@ -174,7 +132,7 @@ def batch_train():
 
     train_loss_per_epoch = list()
     valid_loss_per_epoch = list()
-
+    
     for epoch in range(num_epochs):
         ti = time.time()
         temp_loss_per_epoch = 0
@@ -183,22 +141,27 @@ def batch_train():
             batch_images = train_images[batch_id * batch_size : (batch_id + 1) * batch_size]
             batch_labels = train_labels[batch_id * batch_size : (batch_id + 1) * batch_size]
             
-            _, loss_per_batch = ss.run([optimizer, loss], feed_dict = {img_pl : batch_images, lbl_pl : batch_labels})
+            _, _, loss_per_batch = ss.run([extra_update_ops, optimizer, loss], feed_dict = {img_pl : batch_images, lbl_pl : batch_labels, training_pl : bool(config['TRAINING'])})
             temp_loss_per_epoch += (batch_labels.shape[0] * loss_per_batch)
         ti = time.time() - ti
-        loss_validation_set = ss.run(loss, feed_dict = {img_pl : valid_images, lbl_pl : valid_labels})
+        loss_validation_set = ss.run(loss, feed_dict = {img_pl : valid_images, lbl_pl : valid_labels, training_pl : not(config['TRAINING'])})
         train_loss_per_epoch.append(temp_loss_per_epoch)
         valid_loss_per_epoch.append(loss_validation_set)
+
         print("Epoch : " + str(epoch+1) + "/" + str(num_epochs) + ", time taken : " + str(ti) + " sec.")
         print("Avg. training loss : " + str(temp_loss_per_epoch / train_images.shape[0]))
         print("Avg. validation loss : " + str(loss_validation_set))
         print("")
-    
+
+        if (epoch + 1) % 25 == 0:
+            save_model(ss, model_directory, config['model_file'][model_to_use], epoch)
+        
+
     print("Training the Network Completed...........")
     print("")
     
     print("Saving the model.........................")
-    save_model(ss, model_directory, config['model_file'], epoch)
+    save_model(ss, model_directory, config['model_file'][model_to_use], epoch)
     train_loss_per_epoch = np.array(train_loss_per_epoch)
     valid_loss_per_epoch = np.array(valid_loss_per_epoch)
     
@@ -208,9 +171,10 @@ def batch_train():
     losses_dict['train_loss'] = train_loss_per_epoch
     losses_dict['valid_loss'] = valid_loss_per_epoch
 
-    np.save(os.path.join(os.getcwd(), os.path.join(model_directory, config['model_metrics'])), (losses_dict))
+    np.save(os.path.join(os.getcwd(), os.path.join(model_directory, config['model_metrics'][model_to_use])), (losses_dict))
     print("Saving the model Completed...............")
     print("")
+
     ss.close()
 
 def main():
