@@ -6,24 +6,43 @@ import time
 import numpy as np
 import tensorflow as tf
 
+import network_architecture as na
 from digits_net_utils import read_config_file, get_all_images_labels, get_preprocessed_labels, get_accuracy_score, get_confusion_matrix
-from digits_net_train import get_placeholders, build_network, get_softmax_layer
+from digits_net_train import get_placeholders, get_softmax_layer
 
 
 param_config_file_name = os.path.join(os.getcwd(), "mnist_config.json")
 
 
-# load the model architecture
-def load_model(config, img_pl):
-    loaded_model_output = build_network(config, img_pl, training = not(config['TRAINING']))
-    return loaded_model_output
+# load the network based on vgg encoder
+def load_model_vgg(img_pl, training_pl, config):
+    net_arch = na.Network_Architecture(img_pl, config['kernel_size'], config['num_kernels'], config['strides'], config['data_format'], config['padding'], config['pool_size'], training_pl, config['dense_layer_neurons'], config['NUM_CLASSES'], config['dropout_rate'])
+    net_arch.vgg_encoder()
+    logits = net_arch.logits
+
+    return logits
+
+# load the network based on normal residual encoder
+def load_model_res(img_pl, training_pl, config):
+    net_arch = na.Network_Architecture(img_pl, config['kernel_size'], config['num_kernels'], config['strides'], config['data_format'], config['padding'], config['pool_size'], training_pl, config['dense_layer_neurons'], config['NUM_CLASSES'], config['dropout_rate'], config['reduction_strides'])
+    net_arch.residual_encoder()
+    logits = net_arch.logits
+
+    return logits
+
+# load the network based on pre-activation residual encoder
+def load_model_preact_res(img_pl, training_pl, config):
+    net_arch = na.Network_Architecture(img_pl, config['kernel_size'], config['num_kernels'], config['strides'], config['data_format'], config['padding'], config['pool_size'], training_pl, config['dense_layer_neurons'], config['NUM_CLASSES'], config['dropout_rate'], config['reduction_strides'])
+    net_arch.preactivation_residual_encoder()
+    logits = net_arch.logits
 
 
 # run inference on test set
 def infer():
     print("Reading the Config File..................")
     config = read_config_file(param_config_file_name)
-    model_directory = config['model_directory'] + str(config['num_epochs'])
+    model_to_use = config['model_to_use']
+    model_directory = config['model_directory'][model_to_use] + str(config['num_epochs'])
     print("Reading the Config File Completed........")
     print("")
 
@@ -49,8 +68,16 @@ def infer():
         all_images = np.transpose(all_images, [0, 3, 1, 2])
  
     img_pl = get_placeholders(img_placeholder_shape = IMAGE_PLACEHOLDER_SHAPE, training = not(config['TRAINING']))
-    network_output = load_model(config, img_pl)
-    prediction = get_softmax_layer(input_tensor = network_output)
+    training_pl = tf.placeholder(tf.bool)
+
+    if model_to_use == 0:
+        network_logits = load_model_vgg(img_pl, training_pl, config)
+    elif model_to_use == 1:
+        network_logits = load_model_res(img_pl, training_pl, config)
+    else:
+        network_logits = load_model_preact_res(img_pl, training_pl, config)
+
+    probs_prediction = get_softmax_layer(input_tensor = network_logits)
     print("Loading the Network Completed...........")
     print("")
 
@@ -62,19 +89,19 @@ def infer():
     ss.run(tf.global_variables_initializer())
 
     # load the model parameters
-    tf.train.Saver().restore(ss, os.path.join(os.getcwd(), os.path.join(model_directory, config['model_file'])) + '-' + str(config['num_epochs']))
+    tf.train.Saver().restore(ss, os.path.join(os.getcwd(), os.path.join(model_directory, config['model_file'][model_to_use])) + '-' + str(config['num_epochs']))
 
     print("")
     print("Inference Started.......................")
     ti = time.time()
-    logits_predicted = ss.run(prediction, feed_dict = {img_pl : all_images})
+    probs_predicted = ss.run(probs_prediction, feed_dict = {img_pl : all_images, training_pl : not(config['TRAINING'])})
     ti = time.time() - ti
     print("Inference Completed.....................")
     print("Time Taken for Inference : " +str(ti))
     print("")
 
-    logits_predicted_tensor = tf.convert_to_tensor(logits_predicted)
-    output_labels = tf.argmax(logits_predicted_tensor, axis = 1)
+    probs_predicted_tensor = tf.convert_to_tensor(probs_predicted)
+    output_labels = tf.argmax(probs_predicted_tensor, axis = 1)
     all_labels_predicted = ss.run(output_labels)
     all_labels_predicted = np.array(all_labels_predicted)
 
