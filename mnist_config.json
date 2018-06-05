@@ -19,5 +19,5 @@
     "model_metrics" : ["digits_vgg_metrics.npy", "digits_res_metrics.npy", "digits_preact_res_metrics.npy"],
     "model_file" : ["digits_vgg_model", "digits_res_model", "digits_preact_res_model"],
     "model_directory" : ["model_vgg_", "model_res_", "model_preact_res_"],
-    "model_to_use" : 0   
+    "model_to_use" : 0
 }
