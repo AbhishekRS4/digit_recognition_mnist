@@ -36,6 +36,8 @@ def load_model_preact_res(img_pl, training_pl, config):
     net_arch.preactivation_residual_encoder()
     logits = net_arch.logits
 
+    return logits
+
 
 # run inference on test set
 def infer():
