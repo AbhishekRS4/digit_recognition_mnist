@@ -16,5 +16,5 @@
 model | number of epochs | accuracy
 ------|------------------|---------
 vgg   |       300        |   99.3
-resnet|       300        |   99.47
+normal resnet|    300    |   99.47
 preactivation resnet| 300|   99.43 
