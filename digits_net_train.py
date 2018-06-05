@@ -97,11 +97,11 @@ def batch_train():
         net_arch.vgg_encoder()
         logits = net_arch.logits
     elif model_to_use == 1:
-        net_arch = na.Network_Architecture(img_pl, config['kernel_size'], config['num_kernels'], config['strides'], config['data_format'], config['padding'], config['pool_size'], training_pl, config['dense_layer_neurons'], config['NUM_CLASSES'], config['dropout_rate'], config['reduction_strides'])
+        net_arch = na.Network_Architecture(img_pl, config['kernel_size'], config['num_kernels'], config['strides'], config['data_format'], config['padding'], config['pool_size'], training_pl, config['dense_layer_neurons'], config['NUM_CLASSES'], config['dropout_rate'], config['pool_size'])
         net_arch.residual_encoder()
         logits = net_arch.logits
     else:
-        net_arch = na.Network_Architecture(img_pl, config['kernel_size'], config['num_kernels'], config['strides'], config['data_format'], config['padding'], config['pool_size'], training_pl, config['dense_layer_neurons'], config['NUM_CLASSES'], config['dropout_rate'], config['reduction_strides'])
+        net_arch = na.Network_Architecture(img_pl, config['kernel_size'], config['num_kernels'], config['strides'], config['data_format'], config['padding'], config['pool_size'], training_pl, config['dense_layer_neurons'], config['NUM_CLASSES'], config['dropout_rate'], config['pool_size'])
         net_arch.preactivation_residual_encoder()
         logits = net_arch.logits
  
