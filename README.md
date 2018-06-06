@@ -11,6 +11,9 @@
 - [x] pre-activation resnet encoder based network
 - [x] loss visualization of architectures
 - [x] accuracy comparison of architectures
+- [ ] weights visualization
+- [ ] intermediate feature maps visualization
+
 
 ## Accuracy comparison
 model | number of epochs | accuracy
