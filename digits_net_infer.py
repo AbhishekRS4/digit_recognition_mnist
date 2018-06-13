@@ -1,4 +1,3 @@
-# coding: utf-8
 # @author : Abhishek R S
 
 import os
