@@ -1,3 +1,5 @@
+# @author : Abhishek R S
+
 import os
 import numpy as np
 import tensorflow as tf
@@ -13,6 +15,7 @@ def main():
     model_to_use = config['model_to_use']
     model_directory = config['model_directory'][model_to_use] + str(config['num_epochs'])
 
+    # define the input placeholder shape
     if config['data_format'] == 'channels_last':
         IMAGE_PLACEHOLDER_SHAPE = [None] + config['TARGET_IMAGE_SIZE'] + [config['NUM_CHANNELS']]
     else:
@@ -21,6 +24,7 @@ def main():
     img_pl = get_placeholders(img_placeholder_shape = IMAGE_PLACEHOLDER_SHAPE, training = not(config['TRAINING']))
     training_pl = tf.placeholder(tf.bool)
 
+    # load the appropriate architecture
     if model_to_use == 0:
         network_logits = load_model_vgg(img_pl, training_pl, config)
     elif model_to_use == 1:
@@ -33,9 +37,14 @@ def main():
 
     ss = tf.Session()
     ss.run(tf.global_variables_initializer())
+
+    # load the saved model
     tf.train.Saver().restore(ss, os.path.join(os.getcwd(), os.path.join(model_directory, config['model_file'][model_to_use])) + '-' + str(config['num_epochs']))
 
+    # prune the graph
     frozen_graph = tf.graph_util.convert_variables_to_constants(ss, ss.graph_def, ['class_predictions'])
+
+    # save the pruned model  
     tf.train.write_graph(frozen_graph, os.path.join(os.getcwd(), model_directory), 'digits_net_frozen.pb', as_text = False)
     print("Conversion Successful")
 
