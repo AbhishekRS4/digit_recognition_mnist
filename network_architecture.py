@@ -1,9 +1,12 @@
+# @author : Abhishek R S
+
 import os
 import numpy as np
 import tensorflow as tf
 
 class Network_Architecture:
 
+    # initialize network parameters
     def __init__(self, img_pl, kernel_size, num_kernels, strides, data_format, padding, pool_size, training_pl, neurons, num_classes, dropout_rate = 0.5, reduction_strides = None):
         self.img_pl = img_pl
         self.kernel_size = kernel_size
@@ -20,7 +23,6 @@ class Network_Architecture:
         self.avg_pool_axes = None
         self.bn_axis = None
         self.l2_regularizer = tf.contrib.layers.l2_regularizer(scale = 0.1)
-        #self.xavier_initializer = tf.contrib.layers.xavier_initializer_conv2d(uniform = True)
 
         if self.data_format == "channels_last":
             self.avg_pool_axes = [1, 2]
@@ -50,6 +52,7 @@ class Network_Architecture:
         self.elu2_2 = self._get_elu_activation(self.bn2_2, "elu2_2") 
         self.pool2 = self._get_maxpool2d_layer(self.elu2_2, self.pool_size, self.pool_size, self.padding, self.data_format, "pool2") 
 
+        # flatten and add fully connected layer with dropout
         self.flatten = self._get_flattened_features(self.pool2, "flatten")
         self.dense1 = self._get_dense_layer(self.flatten, self.neurons[0], "dense1")
         self.dropout = self._get_dropout_layer(self.dense1, self.dropout_rate, self.training, "dropout")
