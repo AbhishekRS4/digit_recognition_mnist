@@ -22,7 +22,6 @@ class Network_Architecture:
         self.reduction_strides = reduction_strides
         self.avg_pool_axes = None
         self.bn_axis = None
-        self.l2_regularizer = tf.contrib.layers.l2_regularizer(scale = 0.1)
 
         if self.data_format == "channels_last":
             self.avg_pool_axes = [1, 2]
@@ -157,7 +156,7 @@ class Network_Architecture:
 
     # return Convolution2D layer
     def _get_conv2d_layer(self, input_tensor, num_filters, kernel_size, strides, padding, data_format, name = "conv"):
-        return tf.layers.conv2d(inputs = input_tensor, filters = num_filters, kernel_size = kernel_size, strides = strides, padding = padding, data_format = data_format, kernel_regularizer = self.l2_regularizer, name = name)
+        return tf.layers.conv2d(inputs = input_tensor, filters = num_filters, kernel_size = kernel_size, strides = strides, padding = padding, data_format = data_format, name = name)
 
 
     # return ELU activation function
