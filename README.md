@@ -11,12 +11,12 @@
 - [x] normal resnet encoder based network
 - [x] pre-activation resnet encoder based network
 - [x] loss visualization of architectures
-- [x] accuracy comparison of architectures
+- [x] performance comparison of architectures
 - [ ] visualization of weights
 - [ ] visualization of intermediate feature maps
 
 
-## Accuracy comparison
+## Performance comparison
 model |      epochs       | accuracy
 ------|-------------------|---------
 vgg   |       300         |   99.3
